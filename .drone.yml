@@ -1,0 +1,13 @@
+---
+kind: pipeline
+name: build
+steps:
+- name: fetch tags
+  image: plugins/git
+  commands:
+  - git fetch
+  - sh bin/candy list-updated > updated.txt
+- name: build foo
+  image: &image_go golang:1.13.4
+  commands:
+  - bash foo/build.sh
