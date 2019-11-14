@@ -1,0 +1,40 @@
+---
+version: 2.1
+jobs:
+  list-updated:
+    docker: 
+    - image: alpine:3.10.0
+    steps:
+    - checkout
+    - run:
+        command: sh bin/candy list-updated > updated.txt
+    - persist_to_workspace:
+        root: .
+        paths:
+        - "*"
+  build-foo:
+    docker: 
+    - image: &image_go golang:1.13.4
+    steps:
+    - attach_workspace:
+        at: .
+    - run:
+        command: bash foo/build.sh
+  build-bar:
+    docker: 
+    - image: *image_go
+    steps:
+    - attach_workspace:
+        at: .
+    - run:
+        command: bash bar/build.sh
+workflows:
+  build:
+    jobs:
+    - list-updated
+    - build-foo:
+        requires:
+        - list-updated
+    - build-bar:
+        requires:
+        - list-updated
