@@ -2,11 +2,19 @@
 kind: pipeline
 name: build
 steps:
-- name: fetch tags
+- name: install candy
+  image: plugins/git
+  commands:
+  - curl -o /tmp/candy.tar.gz -L https://github.com/suzuki-shunsuke/candy/releases/download/v0.1.0-0/candy_0.1.0-0_linux_amd64.tar.gz
+  - tar xvzf /tmp/candy.tar.gz -C /tmp
+  - mv /tmp/candy .
+  - chmod a+x candy
+- name: list-updated
   image: plugins/git
   commands:
   - git fetch
-  - sh bin/candy list-updated > updated.txt
+  - mv candy /bin
+  - candy list-updated > updated.txt
 - name: build foo
   image: &image_go golang:1.13.4
   commands:
