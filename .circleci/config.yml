@@ -5,16 +5,16 @@ jobs:
     docker: 
     - image: alpine:3.10.3
     steps:
-    - checkout
     - run:
         name: install candy
         command: |
           # Error uploading workspace archive: RequestError: send request failed
           # x509: certificate signed by unknown authority
-          apk add ca-certificates curl
+          apk add ca-certificates curl git
           curl -o /tmp/candy.tar.gz -L https://github.com/suzuki-shunsuke/candy/releases/download/v0.1.0-0/candy_0.1.0-0_linux_amd64.tar.gz
           tar xvzf /tmp/candy.tar.gz -C /tmp
           chmod a+x /tmp/candy
+    - checkout
     - run:
         name: list updated services
         command: |
