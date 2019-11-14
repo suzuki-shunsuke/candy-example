@@ -3,11 +3,14 @@ version: 2.1
 jobs:
   list-updated:
     docker: 
-    - image: alpine:3.10.0
+    - image: alpine:3.10.3
     steps:
     - checkout
-    - run:
-        command: sh bin/candy list-updated > updated.txt
+    - run: |
+        # Error uploading workspace archive: RequestError: send request failed
+        # x509: certificate signed by unknown authority
+        apk add ca-certificates
+        sh bin/candy list-updated > updated.txt
     - persist_to_workspace:
         root: .
         paths:
@@ -18,16 +21,14 @@ jobs:
     steps:
     - attach_workspace:
         at: .
-    - run:
-        command: bash foo/build.sh
+    - run: bash foo/build.sh
   build-bar:
     docker: 
     - image: *image_go
     steps:
     - attach_workspace:
         at: .
-    - run:
-        command: bash bar/build.sh
+    - run: bash bar/build.sh
 workflows:
   build:
     jobs:
