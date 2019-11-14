@@ -6,17 +6,19 @@ jobs:
     - image: alpine:3.10.3
     steps:
     - checkout
-    - name: install candy
-      run: |
-        # Error uploading workspace archive: RequestError: send request failed
-        # x509: certificate signed by unknown authority
-        apk add ca-certificates curl
-        curl -o /tmp/candy.tar.gz -L https://github.com/suzuki-shunsuke/candy/releases/download/v0.1.0-0/candy_0.1.0-0_linux_amd64.tar.gz
-        tar xvzf /tmp/candy.tar.gz -C /tmp
-        chmod a+x /tmp/candy
-    - name: list updated services
-      run: |
-        /tmp/candy list-updated > updated.txt
+    - run:
+        name: install candy
+        command: |
+          # Error uploading workspace archive: RequestError: send request failed
+          # x509: certificate signed by unknown authority
+          apk add ca-certificates curl
+          curl -o /tmp/candy.tar.gz -L https://github.com/suzuki-shunsuke/candy/releases/download/v0.1.0-0/candy_0.1.0-0_linux_amd64.tar.gz
+          tar xvzf /tmp/candy.tar.gz -C /tmp
+          chmod a+x /tmp/candy
+    - run:
+        name: list updated services
+        command: |
+          /tmp/candy list-updated > updated.txt
     - persist_to_workspace:
         root: .
         paths:
@@ -27,14 +29,18 @@ jobs:
     steps:
     - attach_workspace:
         at: .
-    - run: bash foo/build.sh
+    - run:
+        name: build foo
+        command: bash foo/build.sh
   build-bar:
     docker: 
     - image: *image_go
     steps:
     - attach_workspace:
         at: .
-    - run: bash bar/build.sh
+    - run:
+        name: build bar
+        command: bash bar/build.sh
 workflows:
   build:
     jobs:
