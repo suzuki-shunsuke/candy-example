@@ -19,6 +19,7 @@ jobs:
         name: list updated services
         command: |
           /tmp/candy list-updated > updated.txt
+          cat updated.txt
     - persist_to_workspace:
         root: .
         paths:
